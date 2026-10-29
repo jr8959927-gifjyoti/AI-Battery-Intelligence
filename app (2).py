@@ -1,44 +1,14 @@
-import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
-import joblib
+st.subheader("🔋 Battery Health Status")
 
-st.set_page_config(
-    page_title="AI Battery Intelligence",
-    page_icon="🔋",
-    layout="wide"
-)
-
-st.title("🔋 AI Battery Intelligence")
-st.subheader("Battery Health, Capacity & RUL Prediction")
-
-# Load dataset and trained models
-data = pd.read_csv("nasa_battery_data.csv")
-capacity_model = joblib.load("battery_capacity_model.pkl")
-rul_model = joblib.load("battery_rul_model.pkl")
-
-# Battery selection
-battery_names = sorted(data["battery"].unique())
-selected = st.selectbox("Select Battery", battery_names)
-
-df = data[data["battery"] == selected].sort_values("cycle")
-latest = df.iloc[-1]
-
-initial_capacity = float(df["capacity_Ah"].iloc[0])
-latest_capacity = float(latest["capacity_Ah"])
-current_cycle = int(latest["cycle"])
-
-# Use recorded SOH when available
-if "SOH_percent" in df.columns:
-    soh = float(latest["SOH_percent"])
+if soh > 90:
+    st.success("🟢 Healthy Battery — Battery health is good.")
+elif soh > 80:
+    st.warning("🟡 Moderate Battery — Battery health is declining.")
 else:
-    soh = (latest_capacity / initial_capacity) * 100
+    st.error("🔴 Critical Battery — Battery health is below 80%.")
 
-# Capacity and health metrics
-col1, col2, col3 = st.columns(3)
-col1.metric("Selected Battery", selected)
-col2.metric("Latest Capacity", f"{latest_capacity:.3f} Ah")
-col3.metric("State of Health (SOH)", f"{soh:.1f}%")
+st.progress(max(0.0, min(1.0, soh / 100)))
+st.caption(f"Current Battery Health: {soh:.1f}%")
 
 # Capacity degradation chart
 st.subheader("Battery Capacity Degradation")
