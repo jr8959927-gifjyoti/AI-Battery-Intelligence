@@ -1,14 +1,16 @@
 st.subheader("🔋 Battery Health Status")
 
-if soh > 90:
+battery_soh = float(soh)
+
+if battery_soh > 90:
     st.success("🟢 Healthy Battery — Battery health is good.")
-elif soh > 80:
+elif battery_soh > 80:
     st.warning("🟡 Moderate Battery — Battery health is declining.")
 else:
     st.error("🔴 Critical Battery — Battery health is below 80%.")
 
-st.progress(max(0.0, min(1.0, soh / 100)))
-st.caption(f"Current Battery Health: {soh:.1f}%")
+st.progress(max(0.0, min(1.0, battery_soh / 100)))
+st.caption(f"Current Battery Health: {battery_soh:.1f}%")
 
 # Capacity degradation chart
 st.subheader("Battery Capacity Degradation")
