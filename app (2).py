@@ -354,6 +354,92 @@ st.caption(
     "This application uses historical dataset records and does "
     "not monitor a physical battery in real time."
 )
+# -----------------------------------------
+# BATTERY CHARGING & DISCHARGING TIME ESTIMATOR
+# -----------------------------------------
 
+import streamlit as st
+
+st.header("🔋 Battery Charging & Discharging Time Estimator")
+
+st.write(
+    "Estimate the approximate charging and discharging time "
+    "of a Lithium-Ion battery."
+)
+
+# Battery capacity
+capacity = st.number_input(
+    "Battery Capacity (Ah)",
+    min_value=0.1,
+    value=2.0,
+    step=0.1
+)
+
+# Current battery charge level
+soc = st.slider(
+    "Current Battery Charge Level (%)",
+    min_value=0,
+    max_value=100,
+    value=30
+)
+
+# Target charging level
+target_soc = st.slider(
+    "Target Charging Level (%)",
+    min_value=1,
+    max_value=100,
+    value=100
+)
+
+# Charging current
+charging_current = st.number_input(
+    "Charging Current (A)",
+    min_value=0.1,
+    value=1.0,
+    step=0.1
+)
+
+# Discharging load current
+load_current = st.number_input(
+    "Discharging Load Current (A)",
+    min_value=0.1,
+    value=1.0,
+    step=0.1
+)
+
+# Charging efficiency
+efficiency = 0.90
+
+if st.button("Calculate Battery Time"):
+
+    if target_soc <= soc:
+        st.warning("Target charging level must be higher than current charge level.")
+
+    else:
+        # Charging time
+        charging_time = (
+            capacity * (target_soc - soc) / 100
+        ) / (charging_current * efficiency)
+
+        # Discharging time
+        discharging_time = (
+            capacity * soc / 100
+        ) / load_current
+
+        st.subheader("Battery Time Estimation")
+
+        st.success(
+            f"Estimated Charging Time: {charging_time:.2f} hours"
+        )
+
+        st.info(
+            f"Estimated Discharging Time: {discharging_time:.2f} hours"
+        )
+
+        st.caption(
+            "Note: These are simplified estimates. Actual time depends "
+            "on battery condition, voltage, temperature, charging profile "
+            "and device load."
+        )
   
 
